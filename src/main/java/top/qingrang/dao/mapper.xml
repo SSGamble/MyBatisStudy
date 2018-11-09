@@ -5,13 +5,41 @@
 <mapper namespace="test">
     <!-- parameterType 可以省略 -->
     <insert id="insertStudent" parameterType="Student">
-		insert into student(name,age,score) values(#{name}, #{age}, #{score})
-	</insert>
+        <!-- 这里的 #{} 是属性 -->
+        insert into student(name,age,score) values(#{name}, #{age}, #{score})
+    </insert>
 
+    <!-- 插入后用新 id 初始化被插入对象 -->
     <insert id="insertStudentCacheId">
         insert into student(name,age,score) values(#{name}, #{age}, #{score})
         <selectKey resultType="int" keyProperty="id" order="AFTER">
             select @@identity
         </selectKey>
     </insert>
+
+    <delete id="deleteStudentById">
+        <!-- 这里的#{}仅仅是个占位符，里面放什么都可以 -->
+        DELETE FROM student WHERE id = #{id}
+    </delete>
+
+    <update id="updateStudent">
+        update student set name=#{name}, age=#{age}, score=#{score} where id=#{id}
+    </update>
+
+    <!-- resultType="Student"，封装成 Student 类 -->
+    <select id="selectAllStudents" resultType="Student">
+        select id,name,age,score from student
+    </select>
+
+    <select id="selectStudentById" resultType="Student">
+        select id,name,age,score from student where id=#{xxx}
+    </select>
+
+    <!-- 模糊查询 -->
+    <select id="selectStudentsByName" resultType="Student">
+        select id,name,age,score from student where name like '%'#{xxx}'%'
+        <!-- select id,name,age,score from student where name like concat('%', #{xxx}, '%') -->
+        <!-- $ 与 # 的区别，# 为占位符，$ 为字符串拼接符(存在 SQL 注入问题) -->
+        <!-- select id,name,age,score from student where name like '%${value}%' -->
+    </select>
 </mapper>
