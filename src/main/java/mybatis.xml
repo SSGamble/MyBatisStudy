@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 注册数据库连接四要素属性文件 -->
+    <properties resource="jdbc_mysql.properties"/>
+
+    <!-- 定义类型别名 -->
+    <typeAliases>
+        <!-- <typeAlias type="top.qingrang.beans.Student" alias="Student"/> -->
+        <!-- 将指定包中所有类的简单类名当作其别名 -->
+        <package name="top.qingrang.beans"/>
+    </typeAliases>
+
+    <!-- 配置运行环境，有多个 environment 是为了方便切换 -->
+    <environments default="onlineEM">
+        <!-- 上线以后的环境 -->
+        <environment id="onlineEM">
+            <!-- 事务管理器，使用 JDBC 的事务管理 -->
+            <transactionManager type="JDBC"/>
+            <!-- 数据源，数据库连接池 -->
+            <dataSource type="POOLED">
+                <!-- 数据库连接四要素 -->
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.user}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+        <!-- 本地测试的环境 -->
+        <environment id="testEM">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://127.0.0.1:3366/test"/>
+                <property name="username" value="root"/>
+                <property name="password" value="111"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- 注册映射文件 -->
+    <mappers>
+        <!-- 配置文件路径 -->
+        <mapper resource="top/qingrang/dao/mapper.xml"/>
+    </mappers>
+
+</configuration>
