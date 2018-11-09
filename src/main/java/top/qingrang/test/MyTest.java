@@ -18,8 +18,18 @@ public class MyTest {
 	}
 
 	@Test
-	public void testInsert() {
+	public void testInsertStudent() {
 		Student student = new Student("张三", 23, 93.5);
-		dao.insertStu(student);
+		System.out.println("插入前：student = " + student);
+		dao.insertStudent(student);
+		System.out.println("插入后：student = " + student);
+	}
+
+	@Test
+	public void testInsertStudentCacheId() {
+		Student student = new Student("张三", 23, 93.5);
+		System.out.println("插入前：student = " + student);
+		dao.insertStudentCacheId(student);
+		System.out.println("插入后：student = " + student);
 	}
 }

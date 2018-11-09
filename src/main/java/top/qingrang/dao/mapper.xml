@@ -7,4 +7,11 @@
     <insert id="insertStudent" parameterType="Student">
 		insert into student(name,age,score) values(#{name}, #{age}, #{score})
 	</insert>
+
+    <insert id="insertStudentCacheId">
+        insert into student(name,age,score) values(#{name}, #{age}, #{score})
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            select @@identity
+        </selectKey>
+    </insert>
 </mapper>
