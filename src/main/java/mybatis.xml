@@ -6,11 +6,21 @@
     <!-- 注册数据库连接四要素属性文件 -->
     <properties resource="jdbc_mysql.properties"/>
 
+    <!-- 设置整个应用所使用的常量 -->
+    <settings>
+        <!-- 延迟加载的总开关 -->
+        <setting name="lazyLoadingEnabled" value="false"/>
+        <!-- 侵入式延迟加载 -->
+        <setting name="aggressiveLazyLoading" value="true"/>
+        <setting name="cacheEnabled" value="false" />
+    </settings>
+
+
     <!-- 定义类型别名 -->
     <typeAliases>
         <!-- <typeAlias type="top.qingrang.beans.Student" alias="Student"/> -->
         <!-- 将指定包中所有类的简单类名当作其别名 -->
-        <package name="top.qingrang.beans"/>
+        <package name="top.qingrang.sql_session_cache.beans"/>
     </typeAliases>
 
     <!-- 配置运行环境，有多个 environment 是为了方便切换 -->
@@ -43,7 +53,7 @@
     <!-- 注册映射文件 -->
     <mappers>
         <!-- 配置文件路径 -->
-        <mapper resource="top/qingrang/dao/mapper.xml"/>
+        <mapper resource="top/qingrang/sql_session_cache/dao/mapper.xml"/>
     </mappers>
 
 </configuration>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.qingrang.crud.dao.IStudentDao">
+
+    <select id="selectStudentsByWhere" resultType="Student">
+        select id,name,age,score
+        from student
+        <where>
+            <if test="name != null and name != ''">
+                and name like '%' #{name} '%'
+            </if>
+            <if test="age > 0">
+                and age > #{age}
+            </if>
+        </where>
+    </select>
+
+    <!-- 类似于 switch case ，且每个 case 都自带了 break -->
+    <select id="selectStudentsByChoose" resultType="Student">
+        select id,name,age,score
+        from student
+        <where>
+            <choose>
+                <when test="name != null and name !=''">
+                    and name like '%' #{name} '%'
+                </when>
+                <when test="age > 0">
+                    and age > #{age}
+                </when>
+                <otherwise>
+                    1 = 2
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <select id="selectStudentsByForeach" resultType="Student">
+        <!-- select id,name,age,score from student where id in (1,3,5) -->
+        select id,name,age,score
+        from student
+        <if test="array.length > 0">
+            where id in
+            <foreach collection="array" item="myid" open="(" close=")" separator=",">
+                #{myid}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="selectStudentsByForeach2" resultType="Student">
+        select id,name,age,score
+        from student
+        <if test="list.size > 0">
+            where id in
+            <foreach collection="list" item="myid" open="(" close=")" separator=",">
+                #{myid}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="selectStudentsByForeach3" resultType="Student">
+        <!-- select id,name,age,score from student where id in (1,3,5) -->
+        select id,name,age,score
+        from student
+        <if test="list.size > 0">
+            where id in
+            <foreach collection="list" item="stu" open="(" close=")" separator=",">
+                #{stu.id}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="selectStudentsBySqlFragment" resultType="Student">
+        select <include refid="selectColumns"/> -- sql 片段
+        from student
+        <if test="array.length > 0">
+            where id in
+            <foreach collection="array" item="myid" open="(" close=")" separator=",">
+                #{myid}
+            </foreach>
+        </if>
+    </select>
+
+    <!-- sql 片段，可用于替换 sql 语句的任何部分 -->
+    <sql id="selectColumns">
+        id,name,age,score
+    </sql>
+
+    <!-- 多条件查询 -->
+    <!-- 使用 map -->
+    <!--<select id="selectStudentsByCondition" resultType="Student">-->
+        <!--select id,name,age,score-->
+        <!--from student-->
+        <!--where name like '%' #{nameCon} '%' &#45;&#45; 模糊查询-->
+            <!--and age > #{ageCon}-->
+            <!--and score > #{stu.score}  &#45;&#45; 对象.属性-->
+    <!--</select>-->
+
+    <!-- 使用索引号 -->
+    <select id="selectStudentsByCondition2" resultType="Student">
+        select id,name,age,score
+        from student
+        where name like '%' #{0} '%'
+            and age > #{1}
+    </select>
+
+
+
+    <!-- parameterType 可以省略 -->
+    <insert id="insertStudent" parameterType="Student">
+        <!-- 这里的 #{} 是属性 -->
+        insert into student(name,age,score) values(#{name}, #{age}, #{score})
+    </insert>
+
+    <!-- 插入后用新 id 初始化被插入对象 -->
+    <insert id="insertStudentCacheId">
+        insert into student(name,age,score) values(#{name}, #{age}, #{score})
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            select @@identity
+        </selectKey>
+    </insert>
+
+    <delete id="deleteStudentById">
+        <!-- 这里的#{}仅仅是个占位符，里面放什么都可以 -->
+        DELETE FROM student WHERE id = #{id}
+    </delete>
+
+    <update id="updateStudent">
+        update student set name=#{name}, age=#{age}, score=#{score} where id=#{id}
+    </update>
+
+    <!-- resultType="Student"，封装成 Student 类 -->
+    <select id="selectAllStudents" resultType="Student">
+        select id,name,age,score from student
+    </select>
+
+    <select id="selectStudentById" resultType="Student">
+        select id,name,age,score from student where id=#{xxx}
+    </select>
+
+    <!-- 若属性名与查询字段名不相同，使用别名 -->
+    <!--<select id="selectAllStudents" resultType="Student">-->
+    <!--select tid id,tname name,tage age,score from student-->
+    <!--</select>-->
+
+    <!--<select id="selectStudentById" resultType="Student">-->
+    <!--select tid id,tname name,tage age,score from student where tid=#{jjj}-->
+    <!--</select>-->
+
+    <!--<insert id="insertStudent">-->
+        <!--insert into student(tname,tage,score) values(#{name}, #{age}, #{score})-->
+    <!--</insert>-->
+
+    <!-- 使用结果映射 resultMap -->
+    <!--<resultMap type="Student" id="studentMapper">-->
+        <!--<id column="tid" property="id"/>-->
+        <!--<result column="tname" property="name"/>-->
+        <!--<result column="tage" property="age"/>-->
+    <!--</resultMap>-->
+
+    <!--<select id="selectAllStudents" resultMap="studentMapper">-->
+        <!--select tid,tname,tage,score from student-->
+    <!--</select>-->
+
+    <!--<select id="selectStudentById" resultMap="studentMapper">-->
+        <!--select tid,tname,tage,score from student where tid=#{jjj}-->
+    <!--</select>-->
+
+    <!-- 模糊查询 -->
+    <select id="selectStudentsByName" resultType="Student">
+        select id,name,age,score from student where name like '%'#{xxx}'%'
+        <!-- select id,name,age,score from student where name like concat('%', #{xxx}, '%') -->
+        <!-- $ 与 # 的区别，# 为占位符，$ 为字符串拼接符(存在 SQL 注入问题) -->
+        <!-- select id,name,age,score from student where name like '%${value}%' -->
+    </select>
+</mapper>

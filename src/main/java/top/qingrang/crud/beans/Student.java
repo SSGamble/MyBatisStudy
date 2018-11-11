@@ -1,4 +1,4 @@
-package top.qingrang.beans;
+package top.qingrang.crud.beans;
 
 /**
  * 实体类

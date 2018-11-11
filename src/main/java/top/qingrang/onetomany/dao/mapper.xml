@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.qingrang.onetomany.dao.ICountryDao">
+
+    <!--多表连接查询方式-->
+    <!--<select id="selectCountryByName" resultMap="countryMapper">-->
+        <!--select cid,cname,mid,mname-->
+        <!--from country,minister-->
+        <!--where countryId=cid and cname=#{cname}-->
+    <!--</select>-->
+    <!--<resultMap type="Country" id="countryMapper">-->
+        <!--<id column="cid" property="cid"/>-->
+        <!--<result column="cname" property="cname"/>-->
+        <!--&lt;!&ndash;关联属性的映射关系，对应 ministers 集合 ，封装成 Minister 类&ndash;&gt;-->
+        <!--<collection property="ministers" ofType="Minister">-->
+            <!--<id column="mid" property="mid"/>-->
+            <!--<result column="mname" property="mname"/>-->
+        <!--</collection>-->
+    <!--</resultMap>-->
+
+    <!-- 多表单独查询方式 -->
+    <select id="selectCountryByName" resultMap="countryMapper">
+        select cid,cname from country where cname=#{xxx}
+    </select>
+    <resultMap type="Country" id="countryMapper">
+        <id column="cid" property="cid"/>
+        <result column="cname" property="cname"/>
+        <collection property="ministers"
+                    ofType="Minister"
+                    select="selectMinisterByCountry"
+                    column="cid"/>
+    </resultMap>
+    <select id="selectMinisterByCountry" resultType="Minister">
+        select mid,mname from minister where countryId=#{ooo}
+    </select>
+
+</mapper>
